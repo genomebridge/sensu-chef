@@ -31,3 +31,7 @@ depends "redisio", ">= 1.7.0"
 ].each do |os|
   supports os
 end
+
+depends "cmi-artifact"
+depends "cmi-thirdparty"
+depends "cmi-conjur2"
