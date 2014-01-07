@@ -30,7 +30,7 @@ if node.sensu.use_ssl
     recursive true
   end
 
-  ssl = Sensu::Helpers.data_bag_item("ssl")
+  #ssl = Sensu::Helpers.data_bag_item("ssl")
 
   %w[
     cacert
@@ -38,8 +38,17 @@ if node.sensu.use_ssl
     key
   ].each do |item|
     path = File.join(ssl_directory, "#{item}.pem")
+    certcontent = case item
+    when 'cacert'
+      conjur2_variable('sensu', 'serverca.crt', visibility: :private)
+    when 'cert'
+      conjur2_variable('sensu', 'server.crt', visibility: :private)
+    when 'key'
+      conjur2_variable('sensu', 'server.key', visibility: :private)
+    end    
     file path do
-      content ssl["server"][item]
+      #content ssl["server"][item]
+      content certcontent
       group "rabbitmq"
       mode 0640
     end
