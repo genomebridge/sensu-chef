@@ -32,6 +32,3 @@ depends "redisio", ">= 1.7.0"
   supports os
 end
 
-depends "cmi-artifact"
-depends "cmi-thirdparty"
-depends "cmi-conjur2"
