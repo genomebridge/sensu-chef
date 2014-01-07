@@ -64,11 +64,11 @@ end
 
 rabbitmq = node.sensu.rabbitmq.to_hash
 
-#config = Sensu::Helpers.data_bag_item("config", true)
+config = Sensu::Helpers.data_bag_item("config", true)
 
-#if config && config["rabbitmq"].is_a?(Hash)
-#  rabbitmq = Chef::Mixin::DeepMerge.merge(rabbitmq, config["rabbitmq"])
-#end
+if config && config["rabbitmq"].is_a?(Hash)
+  rabbitmq = Chef::Mixin::DeepMerge.merge(rabbitmq, config["rabbitmq"])
+end
 
 rabbitmq_vhost rabbitmq["vhost"] do
   action :add
