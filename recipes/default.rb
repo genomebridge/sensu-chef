@@ -17,6 +17,12 @@
 # limitations under the License.
 #
 
+class Chef::Recipe
+  include CMI::Artifact
+  include CMI::Conjur2
+end
+
+
 ruby_block "sensu_service_trigger" do
   block do
     # Sensu service action trigger for LWRP's
@@ -55,14 +61,14 @@ if node.sensu.use_ssl
   ssl = Sensu::Helpers.data_bag_item("ssl")
 
   file node.sensu.rabbitmq.ssl.cert_chain_file do
-    content ssl["client"]["cert"]
+    content conjur2_variable('sensu', 'client.crt', visibility: :private)
     owner "root"
     group "sensu"
     mode 0640
   end
 
   file node.sensu.rabbitmq.ssl.private_key_file do
-    content ssl["client"]["key"]
+    content conjur2_variable('sensu', 'client.key', visibility: :private)
     owner "root"
     group "sensu"
     mode 0640
