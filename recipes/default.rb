@@ -17,18 +17,20 @@
 # limitations under the License.
 #
 
-class Chef::Recipe
-  include CMI::Artifact
-  include CMI::Conjur2
-end
-
-
 ruby_block "sensu_service_trigger" do
   block do
     # Sensu service action trigger for LWRP's
   end
   action :nothing
 end
+
+
+class Chef::Recipe
+  include CMI::Artifact
+  include CMI::Conjur2
+end
+
+
 
 case node.platform
 when "windows"
