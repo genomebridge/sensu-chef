@@ -39,11 +39,22 @@ when "debian"
   end
 when "rhel"
   include_recipe "yum"
+  if node.platform == "amazon"
+    rhel_version_equivalent = 6
+  else
+   rhel_version_equivalent = case node.platform_version.to_i
+   when 6..11  then 5
+   when 12..18 then 6
+   # TODO: 18+ will map to rhel7 but we don't have sensu builds for that yet
+   else
+     raise "I don't know how to map fedora version #{node['platform_version']} to a RHEL version. aborting"
+   end
+  end
 
   repo = yum_repository "sensu" do
     description "sensu monitoring"
     repo = node.sensu.use_unstable_repo ? "yum-unstable" : "yum"
-    url "#{node.sensu.yum_repo_url}/#{repo}/el/#{node['platform_version'].to_i}/$basearch/"
+    url "#{node.sensu.yum_repo_url}/#{repo}/el/#{rhel_version_equivalent}/$basearch/"
     action :add
   end
   repo.gpgcheck(false) if repo.respond_to?(:gpgcheck)
