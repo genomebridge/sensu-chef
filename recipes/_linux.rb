@@ -50,12 +50,16 @@ when "rhel"
 when "fedora"
   include_recipe "yum"
 
-  rhel_version_equivalent = case node.platform_version.to_i
-  when 6..11  then 5
-  when 12..18 then 6
-  # TODO: 18+ will map to rhel7 but we don't have sensu builds for that yet
+  if node.platform == "amazon"
+    rhel_version_equivalent = 6
   else
-    raise "I don't know how to map fedora version #{node['platform_version']} to a RHEL version. aborting"
+   rhel_version_equivalent = case node.platform_version.to_i
+   when 6..11  then 5
+   when 12..18 then 6
+   # TODO: 18+ will map to rhel7 but we don't have sensu builds for that yet
+   else
+     raise "I don't know how to map fedora version #{node['platform_version']} to a RHEL version. aborting"
+   end
   end
 
   repo = yum_repository "sensu" do
