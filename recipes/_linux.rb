@@ -51,6 +51,8 @@ when "rhel"
    end
   end
 
+  rhel_version_equivalent = platform?("amazon") ? 6 : node.platform_version.to_i
+
   repo = yum_repository "sensu" do
     description "sensu monitoring"
     repo = node.sensu.use_unstable_repo ? "yum-unstable" : "yum"

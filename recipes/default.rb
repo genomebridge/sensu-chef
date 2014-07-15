@@ -24,7 +24,6 @@ ruby_block "sensu_service_trigger" do
   action :nothing
 end
 
-
 class Chef::Recipe
   include CMI::Artifact
   include CMI::Conjur2
@@ -45,12 +44,19 @@ directory node.sensu.log_directory do
   recursive true
   mode 0750
 end
-  
-directory File.join(node.sensu.directory, "conf.d") do
-  owner "root"
-  group "sensu"
-  recursive true
-  mode 0750
+
+%w[
+  conf.d
+  plugins
+  handlers
+  extensions
+].each do |dir|
+  directory File.join(node.sensu.directory, dir) do
+    owner node.sensu.admin_user
+    group "sensu"
+    recursive true
+    mode 0750
+  end
 end
 
 if node.sensu.use_ssl
@@ -58,7 +64,11 @@ if node.sensu.use_ssl
   node.override.sensu.rabbitmq.ssl.cert_chain_file = File.join(node.sensu.directory, "ssl", "cert.pem")
   node.override.sensu.rabbitmq.ssl.private_key_file = File.join(node.sensu.directory, "ssl", "key.pem")
 
-  directory File.join(node.sensu.directory, "ssl")
+  directory File.join(node.sensu.directory, "ssl") do
+    owner node.sensu.admin_user
+    group "sensu"
+    mode 0750
+  end
 
   #ssl = Sensu::Helpers.data_bag_item("ssl")
 
