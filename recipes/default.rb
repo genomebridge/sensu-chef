@@ -92,4 +92,5 @@ else
   end
 end
 
+Chef::Config[:data_bag_path] = './'
 sensu_base_config node.name
